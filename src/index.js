@@ -12,21 +12,18 @@ const defaultEnvs = {
 const defaultOptions = {
   host: 'smtp.gmail.com',
   port: 587,
-  secure: true,
-  // from
-  // authUser
-  // authPass
+  secure: false,
 };
 
 module.exports = {
-  setup: (options) => {
+  setup: (options = {}) => {
     const copyOfDefaults = { ...defaultOptions };
     const mergedOptions = Object.assign(copyOfDefaults, options);
 
     // Assign these settings to our local ENV variables
     // eslint-disable-next-line no-restricted-syntax
     for (const key in mergedOptions) {
-      if (typeof defaultEnvs[key] !== 'undefined') {
+      if (typeof defaultEnvs[key] !== 'undefined' && typeof process.env[defaultEnvs[key]] === 'undefined') {
         process.env[defaultEnvs[key]] = mergedOptions[key];
       }
     }
@@ -47,13 +44,20 @@ module.exports = {
       options.secure = options.secure.trim().toLowerCase() === 'true';
     }
 
+    if (typeof options.port === 'string') {
+      options.port = parseInt(options.port.trim(), 10);
+    }
+
     const transporter = nodemailer.createTransport({
       host: options.host,
       port: options.port,
       secure: options.secure,
       auth: {
         user: options.authUser,
-        password: options.authPass,
+        pass: options.authPass,
+      },
+      tls: {
+        ciphers: 'SSLv3',
       },
     });
 

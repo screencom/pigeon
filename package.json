@@ -1,5 +1,5 @@
 {
-  "name": "pigeon",
+  "name": "carrier-pigeon",
   "version": "1.0.0",
   "description": "An easy to use, no-nonsense mail plugin",
   "main": "src/index.js",
